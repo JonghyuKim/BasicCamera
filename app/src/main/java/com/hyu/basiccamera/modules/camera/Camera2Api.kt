@@ -5,11 +5,11 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.hardware.camera2.*
 import android.os.Build
-import android.view.Surface
 import org.koin.standalone.KoinComponent
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import com.hyu.basiccamera.modules.preview.PreviewData
 
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -21,14 +21,10 @@ class Camera2Api(context: Context): ICameraModule, KoinComponent{
     private var cameraSession: CameraCaptureSession? = null
     private var previewRequestBuilder : CaptureRequest.Builder? = null
 
-    private var previewSurface : Surface? = null
-
     private var cameraThread: HandlerThread? = null
     private var cameraHandler: Handler? = null
 
-    override fun setSurface(surface: Surface) {
-        previewSurface = surface
-    }
+    override var previewData : PreviewData? = null
 
     @SuppressLint("MissingPermission")
     override fun openCamera() {
@@ -62,8 +58,9 @@ class Camera2Api(context: Context): ICameraModule, KoinComponent{
             cameraDevice = camera
             try {
                 previewRequestBuilder = cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
-                previewRequestBuilder?.addTarget(previewSurface)
-                cameraDevice!!.createCaptureSession(listOf(previewSurface), cameraSessionCallback, cameraHandler)
+                previewRequestBuilder?.addTarget(previewData?.previewSurface)
+                previewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE,CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
+                cameraDevice!!.createCaptureSession(listOf(previewData?.previewSurface), cameraSessionCallback, cameraHandler)
             } catch (e: CameraAccessException) {
                 camera.close()
                 cameraDevice = null

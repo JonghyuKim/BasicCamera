@@ -1,23 +1,29 @@
 package com.hyu.basiccamera.modules
 
+import android.util.Log
 import android.view.SurfaceHolder
 import com.hyu.basiccamera.modules.camera.ICameraModule
-import com.hyu.basiccamera.modules.decorator.IDecoratorModule
+import com.hyu.basiccamera.modules.preview.PreviewData
 import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
 import org.koin.standalone.inject
 
 class CameraViewConnector : SurfaceHolder.Callback , KoinComponent{
 
-    val camera : ICameraModule by inject()
-    var decorator : IDecoratorModule? = get()
+    private val camera : ICameraModule by inject()
+    private val previewData : PreviewData by inject()
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-        val surface = decorator?.run {
-            outputSurface = holder!!.surface
-            inputSurface
-        } ?: holder!!.surface
-        camera.setSurface(surface)
+
+        Log.d("hyuhyu", "surfaceChange !")
+
+        previewData.apply {
+            surfaceWidth = width
+            surfaceHeigth = height
+            previewSurfaceHolder = holder
+            previewSurface = holder!!.surface
+        }
+
+        camera.previewData = previewData
         camera.openCamera()
     }
 
