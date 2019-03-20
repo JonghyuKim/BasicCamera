@@ -66,10 +66,10 @@ class CameraApi(context: Context): ICameraModule, KoinComponent{
         val cameraParams = camera.parameters
         val FocusModes = cameraParams.getSupportedFocusModes()
 
-        calculatorPreviewSize(cameraParams, previewData!!.surfaceWidth, previewData!!.surfaceHeigth)
+        calculatorPreviewSize(cameraParams, previewData!!.surfaceWidth, previewData!!.surfaceHeight)
 
         if (FocusModes != null && FocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-            cameraParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)
+            cameraParams.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO
         }
         cameraParams.set("orientation", "landscape")
     }

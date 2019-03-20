@@ -16,14 +16,14 @@ class CameraViewConnector : SurfaceHolder.Callback , KoinComponent{
 
         Log.d("hyuhyu", "surfaceChange !")
 
-        previewData.apply {
-            surfaceWidth = width
-            surfaceHeigth = height
-            previewSurfaceHolder = holder
-            previewSurface = holder!!.surface
-        }
-
-        camera.previewData = previewData
+        camera.previewData = previewData.apply {
+                                    surfaceWidth = width
+                                    surfaceHeight = height
+                                    previewSurfaceHolder = if(decorator != null){
+                                                                    decorator!!.outputSurface = holder?.surface
+                                                                    DummyHolder(decorator!!.inputSurface!!)
+                                                               } else holder
+                                }
         camera.openCamera()
     }
 

@@ -5,6 +5,7 @@ import android.view.SurfaceHolder
 import com.hyu.basiccamera.modules.camera.Camera2Api
 import com.hyu.basiccamera.modules.camera.CameraApi
 import com.hyu.basiccamera.modules.camera.ICameraModule
+import com.hyu.basiccamera.modules.decorator.DecoratorCommon
 import com.hyu.basiccamera.modules.decorator.DecoratorHdr
 import com.hyu.basiccamera.modules.decorator.IDecoratorModule
 import com.hyu.basiccamera.modules.preview.PreviewData
@@ -28,12 +29,13 @@ class SupportModules{
             }
 
             val decoratorModules = module {
-                factory<IDecoratorModule> { DecoratorHdr()}
+                factory<IDecoratorModule>(name = "Hdr") { DecoratorHdr()}
+                factory<IDecoratorModule>(name = "Common") { DecoratorCommon()}
             }
 
             val previewModules = module {
                 factory<SurfaceHolder.Callback> { CameraViewConnector() }
-                factory<PreviewData>{PreviewData(get())}
+                factory<PreviewData> {PreviewData(get("Common"))}
             }
             listOf(cameraModules, decoratorModules, previewModules)
         }
